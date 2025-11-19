@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+# Volare Solutions Leo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Leonardo's Crib Cam is composed of two collaborating parts:
 
-## Available Scripts
+1. **Proxy API** – an Express server that authenticates with Nanit, manages MFA, and securely proxies the protected HLS video stream.
+2. **React Application** – a gated UI that handles visitor verification, MFA prompts, and the embedded video player experience.
 
-In the project directory, you can run:
+Use the sections below to understand how each side of the stack works and how to run them locally.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Proxy API
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### What it does
+- Hosts `http://localhost:3001` (configurable via `PROXY_PORT`).
+- Provides endpoints for health (`/api/ping`), login, MFA verification, baby-token lookup, and a streaming proxy for the Nanit HLS feed.
+- Normalizes headers, forwards cookies/tokens, and pipes the secure stream back to the front end.
 
-### `npm test`
+### Local setup
+1. Install dependencies:
+   ```bash
+   cd api && npm install
+   ```
+2. Configure environment variables (see `.env.example` if provided) for credentials such as Nanit email/password and any required tokens.
+3. Start the server:
+   ```bash
+   npm start
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Key endpoints
+- `GET /api/ping` – quick health check.
+- `POST /api/nanit/login` – forwards login credentials to Nanit and surfaces MFA requirements.
+- `POST /api/nanit/verify-mfa` – submits MFA code, returning the session access token when successful.
+- `POST /api/nanit/baby-token` – exchanges the session token plus baby ID for a short-lived `baby_token`.
+- `GET /api/nanit/video` – proxies the secure HLS manifest using the `baby_token` (passed via `Authorization` header by the React app).
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## React Application
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### What it does
+- Vite-powered React UI with routes for the landing page (`/`) and Crib Cam experience (`/crib-cam`).
+- Gated access: checks client IP, then prompts for a PIN code if needed before it will attempt Nanit login through the proxy.
+- Guides users through MFA by displaying a custom keypad component and forwards the entered code to the proxy.
+- Requests a baby token, injects it into the `<VideoPlayer />`, and plays the proxied HLS feed with optional fullscreen autoplay.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Local setup
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Configure Vite env values (e.g., `VITE_ACCESS_CODE`, `VITE_ALLOWED_IP`, `VITE_NANIT_EMAIL`, `VITE_NANIT_PASSWORD`, `VITE_PHONE_SUFFIX`, `VITE_BABY_ID`).
+3. Start the dev server:
+   ```bash
+   npm run dev
+   ```
+4. Visit `http://localhost:5173` (or the port Vite reports) and access `/crib-cam`. Ensure the proxy API is running so login/MFA flows can complete.
 
-### `npm run eject`
+### Notable UI pieces
+- `Home` page: simple entry point that routes visitors to the camera experience.
+- `CribCam` page: orchestrates IP/PIN checks, login, MFA, baby token retrieval, and renders the video player.
+- `PinCodeInput` & `VideoPlayer` components: reusable building blocks for secure access flows and video playback.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Helpful Scripts
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| Command | Location | Description |
+| --- | --- | --- |
+| `npm start` | `api/` | Runs the proxy API on the configured port. |
+| `npm run dev` | project root | Starts the Vite dev server for the React UI. |
+| `npm run build` | project root | Produces an optimized production build of the React app. |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Run the API and React dev server concurrently for a full local experience.
