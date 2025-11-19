@@ -1,0 +1,8 @@
+{
+  "short_name": "Leo's World",
+  "name": "Leo's World",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
