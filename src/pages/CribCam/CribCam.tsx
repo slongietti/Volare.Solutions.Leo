@@ -39,10 +39,13 @@ const CribCam: React.FC = () => {
       return null;
       }
 
+      
+  const getApiUrl = (resource : string) =>
+    `http://${window.location.hostname}:3001/api/nanit/${resource}`;
 
   const handleMfaComplete = async (mfaCode: string) => {
     try {
-      const mfaResponse =await fetch('http://localhost:3001/api/nanit/verify-mfa', {
+      const mfaResponse =await fetch(getApiUrl('verify-mfa'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,9 +81,10 @@ const CribCam: React.FC = () => {
     return JSON.parse(json);
   }
 
+
   const login = async () => {
     try {
-      const loginResponse = await fetch('http://localhost:3001/api/nanit/login', {
+      const loginResponse = await fetch(getApiUrl('login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +124,7 @@ const CribCam: React.FC = () => {
 
   const startVideo = async (token : string) => {
     try {
-      const babyTokenResponse = await fetch('http://localhost:3001/api/nanit/baby-token', {
+      const babyTokenResponse = await fetch(getApiUrl('baby-token'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -178,7 +182,7 @@ const CribCam: React.FC = () => {
       </div>
     ) : babyToken ? (
       <VideoPlayer 
-        src="http://localhost:3001/api/nanit/video"
+        src={getApiUrl('video')}
         authToken={babyToken}
         autoPlay={true}
         autoFullScreen={true}
