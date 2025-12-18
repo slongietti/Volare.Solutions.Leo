@@ -19,12 +19,12 @@ const createHeaders = (nextActionId) => {
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/ping', (req, res) => {
+app.get('/ping', (req, res) => {
   res.send('success');
 });
 
 // Video stream start endpoint
-app.get('/api/nanit/video', async (req, res) => {
+app.get('/nanit/video', async (req, res) => {
   try {
 
     const token = req.headers.authorization.split(' ')[1];
@@ -82,7 +82,7 @@ app.get(/hls\/(.*)$/, async (req, res) => {
 });
 
 // Login endpoint
-app.post('/api/nanit/login', async (req, res) => {
+app.post('/nanit/login', async (req, res) => {
   try {
     const response = await axios.post(
       `${NANIT_BASE_URL}/login`,
@@ -110,7 +110,7 @@ app.post('/api/nanit/login', async (req, res) => {
 });
 
 // MFA verification endpoint
-app.post('/api/nanit/verify-mfa', async (req, res) => {
+app.post('/nanit/verify-mfa', async (req, res) => {
   try {
     const response = await axios.post(
       `${NANIT_BASE_URL}/login/mfa-required`,
@@ -147,7 +147,7 @@ app.post('/api/nanit/verify-mfa', async (req, res) => {
 });
 
 //baby token endpoint
-app.post('/api/nanit/baby-token', async (req, res) => {
+app.post('/nanit/baby-token', async (req, res) => {
   try {
     const response = await axios.get(
       `https://media-web-secured.nanit.com/babies/${req.body.babyId}/tokens`,
