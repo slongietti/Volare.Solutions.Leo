@@ -15,6 +15,8 @@ Use the sections below to understand how each side of the stack works and how to
 - Hosts `http://localhost:3001` (configurable via `PROXY_PORT`).
 - Provides endpoints for health (`/api/ping`), login, MFA verification, baby-token lookup, and a streaming proxy for the Nanit HLS feed.
 - Normalizes headers, forwards cookies/tokens, and pipes the secure stream back to the front end.
+- This is exposed indirectly the web application via the `nginx.config` file that proxies /api to port 3001 of the internal (localhost) server.
+- That configuration file is observed by the `Dockerfile` for the UI. The API has its own Dockerfile and image.
 
 ### Local setup
 1. Install dependencies:
@@ -78,3 +80,5 @@ Run the API and React dev server concurrently for a full local experience.
 - The `build-image.yml` script contains the GitHub action to build and push the container image to GHCR and deploy the image to Azure
 - The Azure credentials / required arugments are stored in secrets on the repository
 - Azure has an app registration for GitHub that provides the client login details and has the `Contributor` role on the App Service
+- There are 2 images one for UI (main) and API. These are deployed to the Azure Web App's "Sidecar" feature which allows multiple containers to run on a single Web App instance.
+- The sitecontainers.json contains the rules for deploying these containers and includes App Setting keys in the file for username and password (PAT) for the GHCP.
