@@ -4,10 +4,24 @@ on:
   workflow_dispatch:
   
 jobs:
-  build:
+  variables: 
     runs-on: ubuntu-latest
     outputs:
-      image_name: ${{ steps.image_name.outputs.value }}
+      image_image: ${{ steps.image_name.outputs.value }}
+    permissions:
+      contents: read
+
+    steps:
+      - name: Get image name as lowercase repo name
+        id: image_name
+        run: |
+          IMAGE="ghcr.io/${{ github.repository }}"
+          IMAGE_LOWER=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
+          echo "value=$IMAGE_LOWER" >> "$GITHUB_OUTPUT"
+  
+  build:
+    runs-on: ubuntu-latest
+    needs: variables
     permissions:
       contents: read
       packages: write
@@ -23,20 +37,32 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get image name as lowercase repo name
-        id: image_name
+      - name: Docker Build UI
         run: |
-          IMAGE="ghcr.io/${{ github.repository }}"
-          IMAGE_LOWER=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
-          echo "value=$IMAGE_LOWER" >> "$GITHUB_OUTPUT:latest"
+          docker build \
+          --build-arg VITE_ACCESS_CODE="${{ secrets.VITE_ACCESS_CODE }}" \
+          --build-arg VITE_ALLOWED_IP="${{ secrets.VITE_ALLOWED_IP }}" \
+          --build-arg VITE_NANIT_EMAIL="${{ secrets.VITE_NANIT_EMAIL }}" \
+          --build-arg VITE_NANIT_PASSWORD="${{ secrets.VITE_NANIT_PASSWORD }}" \
+          --build-arg VITE_BABY_ID="${{ secrets.VITE_BABY_ID }}" \
+          --build-arg VITE_PHONE_SUFFIX="${{ secrets.VITE_PHONE_SUFFIX }}" \
+          -t ghcr.io/${{ needs.variables.outputs.image_name }}:latest .
 
-      - name: Docker build
+      - name: Docker Push UI
         run: |
-          docker build -t ghcr.io/${{ steps.image_name.outputs.value }} .
+          docker push ghcr.io/${{ needs.variables.outputs.image_name }}:latest
 
-      - name: Docker push
+          
+      - name: Docker Build API
         run: |
-          docker push ghcr.io/${{ steps.image_name.outputs.value }}
+          docker build \
+          --build-arg NODE_ENV="production" \
+          --build-arg PORT="3001" \
+          -t ghcr.io/${{ needs.variables.outputs.image_name }}.api:latest ./api
+
+      - name: Docker Push API
+        run: |
+          docker push ghcr.io/${{ needs.variables.outputs.image_name }}.api:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -58,7 +84,7 @@ jobs:
             az webapp config container set \
               --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
               --resource-group "${{ secrets.AZURE_RESOURCE_GROUP_NAME }}" \
-              --docker-custom-image-name ${{ needs.build.outputs.image_name }}
+              --docker-custom-image-name ${{ needs.variables.outputs.image_name }}
       
     
     
