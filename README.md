@@ -72,3 +72,9 @@ Use the sections below to understand how each side of the stack works and how to
 | `npm run build` | project root | Produces an optimized production build of the React app. |
 
 Run the API and React dev server concurrently for a full local experience.
+
+## Deployment
+
+- The `build-image.yml` script contains the GitHub action to build and push the container image to GHCR and deploy the image to Azure
+- The Azure credentials / required arugments are stored in secrets on the repository
+- Azure has an app registration for GitHub that provides the client login details and has the `Contributor` role on the App Service
