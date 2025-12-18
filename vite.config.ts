@@ -4,7 +4,6 @@ import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), 'VITE_');
   return {
   base: '/',
   root: '.',  // Explicitly set root directory
@@ -33,14 +32,6 @@ export default defineConfig(({ mode }) => {
     alias: {
       '@': resolve(__dirname, 'src')  // Optional: for @/ imports
     }
-  },
-  define: {
-    'process.env.VITE_ACCESS_CODE': JSON.stringify(env.VITE_ACCESS_CODE),
-    'process.env.VITE_ALLOWED_IP': JSON.stringify(env.VITE_ALLOWED_IP),
-    'process.env.VITE_NANIT_EMAIL': JSON.stringify(env.VITE_NANIT_EMAIL),
-    'process.env.VITE_NANIT_PASSWORD': JSON.stringify(env.VITE_NANIT_PASSWORD),
-    'process.env.VITE_BABY_ID': JSON.stringify(env.VITE_BABY_ID),
-    'process.env.VITE_PHONE_SUFFIX': JSON.stringify(env.VITE_PHONE_SUFFIX),
   }
 }
 }); 
