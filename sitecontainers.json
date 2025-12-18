@@ -1,6 +1,6 @@
 [
   {
-    "name": "ui",
+    "name": "main",
     "properties": {
       "image": "ghcr.io/slongietti/volare.solutions.leo:latest",
       "targetPort": 80,
