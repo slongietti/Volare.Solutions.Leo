@@ -48,11 +48,11 @@ jobs:
           --build-arg VITE_NANIT_PASSWORD="${{ secrets.VITE_NANIT_PASSWORD }}" \
           --build-arg VITE_BABY_ID="${{ secrets.VITE_BABY_ID }}" \
           --build-arg VITE_PHONE_SUFFIX="${{ secrets.VITE_PHONE_SUFFIX }}" \
-          -t ghcr.io/${{ needs.variables.outputs.image_name }}:latest .
+          -t ${{ needs.variables.outputs.image_name }}:latest .
 
       - name: Docker Push UI
         run: |
-          docker push ghcr.io/${{ needs.variables.outputs.image_name }}:latest
+          docker push ${{ needs.variables.outputs.image_name }}:latest
 
           
       - name: Docker Build API
@@ -60,11 +60,11 @@ jobs:
           docker build \
           --build-arg NODE_ENV="production" \
           --build-arg PORT="3001" \
-          -t ghcr.io/${{ needs.variables.outputs.image_name }}.api:latest ./api
+          -t ${{ needs.variables.outputs.image_name }}.api:latest ./api
 
       - name: Docker Push API
         run: |
-          docker push ghcr.io/${{ needs.variables.outputs.image_name }}.api:latest
+          docker push ${{ needs.variables.outputs.image_name }}.api:latest
 
   deploy:
     runs-on: ubuntu-latest
