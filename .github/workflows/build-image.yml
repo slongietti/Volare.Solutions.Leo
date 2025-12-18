@@ -32,7 +32,7 @@ jobs:
 
       - name: Docker build
         run: |
-          docker build -t ghcr.io/${{ steps.image_name.outputs.name }}:latest:latest
+          docker build -t ghcr.io/${{ steps.image_name.outputs.name }}:latest:latest .
 
       - name: Docker push
         run: |
