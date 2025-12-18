@@ -1,4 +1,4 @@
-name: Build & Push Docker Image & Deploy to Azure
+name: Build & Deploy
 
 on:
   workflow_dispatch:
@@ -12,6 +12,8 @@ jobs:
       contents: read
 
     steps:
+      - uses: actions/checkout@v4
+      
       - name: Get image name as lowercase repo name
         id: image_name
         run: |
