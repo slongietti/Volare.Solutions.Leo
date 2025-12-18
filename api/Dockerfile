@@ -1,6 +1,11 @@
 # Use official Node.js LTS image
 FROM node:18-alpine
 
+ARG PORT
+
+ARG NODE_ENV
+ENV NODE_ENV=$NODE_ENV
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -14,7 +19,7 @@ RUN npm install
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 3001
+EXPOSE $PORT
 
 # Start the application
 CMD ["node", "server.js"]

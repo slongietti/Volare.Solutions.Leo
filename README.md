@@ -12,7 +12,7 @@ Use the sections below to understand how each side of the stack works and how to
 ## Proxy API
 
 ### What it does
-- Hosts `http://localhost:3001` (configurable via `PROXY_PORT`).
+- Hosts `http://localhost:3001` (configurable via `PORT`).
 - Provides endpoints for health (`/api/ping`), login, MFA verification, baby-token lookup, and a streaming proxy for the Nanit HLS feed.
 - Normalizes headers, forwards cookies/tokens, and pipes the secure stream back to the front end.
 - This is exposed indirectly the web application via the `nginx.config` file that proxies /api to port 3001 of the internal (localhost) server.

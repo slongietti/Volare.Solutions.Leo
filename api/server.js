@@ -4,7 +4,7 @@ const cors = require('cors');
 const axios = require('axios');
 
 const app = express();
-const PORT = process.env.PROXY_PORT || 3001;
+const PORT = process.env.PORT || 3001;
 const NANIT_BASE_URL = 'https://my.nanit.com';
 
 const createHeaders = (nextActionId) => {
