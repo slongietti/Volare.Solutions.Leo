@@ -30,9 +30,10 @@ jobs:
           IMAGE_LOWER=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
           echo "name=$IMAGE_LOWER" >> "$GITHUB_OUTPUT"
 
-      - name: Build & push
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: |
-            ghcr.io/${{ steps.image_name.outputs.name }}:latest:latest
+      - name: Docker build
+        run: |
+          docker build -t ghcr.io/${{ steps.image_name.outputs.name }}:latest:latest
+
+      - name: Docker push
+        run: |
+          docker push ghcr.io/${{ steps.image_name.outputs.name }}:latest:latest
