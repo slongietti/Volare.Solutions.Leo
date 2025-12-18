@@ -1,6 +1,14 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        - VITE_ACCESS_CODE=${VITE_ACCESS_CODE}
+        - VITE_ALLOWED_IP=${VITE_ALLOWED_IP}
+        - VITE_NANIT_EMAIL=${VITE_NANIT_EMAIL}
+        - VITE_NANIT_PASSWORD=${VITE_NANIT_PASSWORD}
+        - VITE_BABY_ID=${VITE_BABY_ID}
+        - VITE_PHONE_SUFFIX=${VITE_PHONE_SUFFIX}
     ports:
       - "80:80"
     environment:
@@ -10,14 +18,16 @@ services:
       - VITE_NANIT_PASSWORD=${VITE_NANIT_PASSWORD}
       - VITE_BABY_ID=${VITE_BABY_ID}
       - VITE_PHONE_SUFFIX=${VITE_PHONE_SUFFIX}
+      - API_URL=api
     depends_on:
       - api 
     restart: unless-stopped
   api:
-    build: ./api
+    build:
+      context: ./api
+      args:
+        - NODE_ENV=production
+        - PORT=3001
     ports:
       - "3001:3001"
-    environment:
-      - NODE_ENV=production
-      - PORT=3001
     restart: unless-stopped
