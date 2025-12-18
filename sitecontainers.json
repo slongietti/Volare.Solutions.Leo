@@ -6,8 +6,8 @@
       "targetPort": 80,
       "isMain": true,
       "authType": "UserCredentials",
-      "userName": "slongietti",
-      "passwordSecret": "GHCR_PAT"
+      "userName": "DOCKER_REGISTRY_SERVER_USERNAME",
+      "passwordSecret": "DOCKER_REGISTRY_SERVER_PASSWORD"
     }
   },
   {
@@ -17,8 +17,8 @@
       "targetPort": 3001,
       "isMain": false,
       "authType": "UserCredentials",
-      "userName": "slongietti",
-      "passwordSecret": "GHCR_PAT"
+      "userName": "DOCKER_REGISTRY_SERVER_USERNAME",
+      "passwordSecret": "DOCKER_REGISTRY_SERVER_PASSWORD"
     }
   }
 ]
