@@ -81,10 +81,10 @@ jobs:
         uses: azure/cli@v2
         with:
           inlineScript: |
-            az webapp config container set \
+            az webapp sitecontainers create \
               --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
               --resource-group "${{ secrets.AZURE_RESOURCE_GROUP_NAME }}" \
-              --docker-custom-image-name ${{ needs.variables.outputs.image_name }}
+              --sitecontainers-spec-file sitecontainers.json
       
     
     
