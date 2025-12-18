@@ -1,0 +1,24 @@
+[
+  {
+    "name": "ui",
+    "properties": {
+      "image": "ghcr.io/slongietti/volare.solutions.leo:latest",
+      "targetPort": 80,
+      "isMain": true,
+      "authType": "UserCredentials",
+      "userName": "slongietti",
+      "passwordSecret": "GHCR_PAT"
+    }
+  },
+  {
+    "name": "api",
+    "properties": {
+      "image": "ghcr.io/slongietti/volare.solutions.leo.api:latest",
+      "targetPort": 3001,
+      "isMain": false,
+      "authType": "UserCredentials",
+      "userName": "slongietti",
+      "passwordSecret": "GHCR_PAT"
+    }
+  }
+]
