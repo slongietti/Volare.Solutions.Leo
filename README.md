@@ -82,3 +82,7 @@ Run the API and React dev server concurrently for a full local experience.
 - Azure has an app registration for GitHub that provides the client login details and has the `Contributor` role on the App Service
 - There are 2 images one for UI (main) and API. These are deployed to the Azure Web App's "Sidecar" feature which allows multiple containers to run on a single Web App instance.
 - The sitecontainers.json contains the rules for deploying these containers and includes App Setting keys in the file for username and password (PAT) for the GHCP.
+
+## Known limitations
+- Only one user can be configured to login and recieve the MFA request.
+- The next action ids are hardcoded and are updated by nanit every so often. These seem to be hardcoded by nanit and are not available via an API. Therefore they have to be harvested from API calls using the web browser.+
