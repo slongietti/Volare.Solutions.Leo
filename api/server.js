@@ -93,7 +93,7 @@ app.post('/nanit/login', async (req, res) => {
         redirectOnSuccess: true
       }],
       {
-        headers: createHeaders('d032ca46fcb22c573ba906be64fc3020196db23a'),
+        headers: createHeaders('7fc3b08b343cd26420b7d30cdf22b34f932ce5a81c'),
       }
     );
     
@@ -124,7 +124,7 @@ app.post('/nanit/verify-mfa', async (req, res) => {
         mfaToken: req.body.mfaToken
       }],
       {
-        headers: createHeaders('0a4ad39cc0b4c1a44ed7e55a7ff503ee5879e1f3'),
+        headers: createHeaders('7f505092cdf6371d5ef91c8a8d17fdcd931486b8e9'),
         maxRedirects: 0
       }
     );
