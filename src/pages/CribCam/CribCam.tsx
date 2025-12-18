@@ -42,6 +42,7 @@ const CribCam: React.FC = () => {
       
   const getApiUrl = (resource : string) =>
     `/api/nanit/${resource}`;
+    // `http://localhost:3001/nanit/${resource}`;
 
   const handleMfaComplete = async (mfaCode: string) => {
     try {

@@ -57,7 +57,7 @@ app.get('/nanit/video', async (req, res) => {
 });
 
 // Video stream content endpoint
-app.get(/hls\/(.*)$/, async (req, res) => {
+app.get(/\/(.*\.ts)$/, async (req, res) => {
   try {
     const resource = req.path.substring(req.path.lastIndexOf('/') + 1);
 
