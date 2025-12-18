@@ -7,7 +7,7 @@ jobs:
   variables: 
     runs-on: ubuntu-latest
     outputs:
-      image_image: ${{ steps.image_name.outputs.value }}
+      image_name: ${{ steps.image_name.outputs.value }}
     permissions:
       contents: read
 
