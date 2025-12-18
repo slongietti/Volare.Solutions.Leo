@@ -37,30 +37,5 @@ jobs:
       - name: Docker push
         run: |
           docker push ghcr.io/${{ steps.image_name.outputs.value }}:latest
-
-  deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Azure login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Azure configure container image
-        uses: azure/cli@v2
-        with:
-          inlineScript: |
-            az webapp config container set \
-              --name "${{ secrets.AZURE_WEBAPP_NAME }}" \
-              --resource-group "${{ secrets.AZURE_RESOURCE_GROUP_NAME }}" \
-              --docker-custom-image-name ${{ needs.build.outputs.image_name }}
-      
     
     
