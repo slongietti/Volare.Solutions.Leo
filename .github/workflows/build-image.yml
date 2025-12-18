@@ -1,9 +1,8 @@
 name: Build & Push to GHCR
 
 on:
-  push:
-    branches: [ "main" ]
-
+  workflow_dispatch:
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,6 +10,7 @@ jobs:
       contents: read
       packages: write
 
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
 
@@ -23,9 +23,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: get repository name as lowercase
+        id: image_name
+        run: |
+          IMAGE="ghcr.io/${{ github.repository }}"
+          IMAGE_LOWER=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
+          echo "name=$IMAGE_LOWER" >> "$GITHUB_OUTPUT"
+
       - name: Build & push
         uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
+            ghcr.io/${{ steps.image_name.outputs.name }}:latest:latest
