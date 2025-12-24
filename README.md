@@ -51,7 +51,7 @@ Use the sections below to understand how each side of the stack works and how to
    ```bash
    npm install
    ```
-2. Configure Vite env values (e.g., `VITE_ACCESS_CODE`, `VITE_ALLOWED_IP`, `VITE_NANIT_EMAIL`, `VITE_NANIT_PASSWORD`, `VITE_PHONE_SUFFIX`, `VITE_BABY_ID`).
+2. Configure Vite env values (e.g., `VITE_NANIT_ACCOUNTS`, `VITE_BABY_ID`).
 3. Start the dev server:
    ```bash
    npm run dev

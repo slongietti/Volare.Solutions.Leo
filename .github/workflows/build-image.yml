@@ -42,12 +42,8 @@ jobs:
       - name: Docker Build UI
         run: |
           docker build \
-          --build-arg VITE_ACCESS_CODE="${{ secrets.VITE_ACCESS_CODE }}" \
-          --build-arg VITE_ALLOWED_IP="${{ secrets.VITE_ALLOWED_IP }}" \
-          --build-arg VITE_NANIT_EMAIL="${{ secrets.VITE_NANIT_EMAIL }}" \
-          --build-arg VITE_NANIT_PASSWORD="${{ secrets.VITE_NANIT_PASSWORD }}" \
+          --build-arg VITE_NANIT_ACCOUNTS="${{ secrets.VITE_NANIT_ACCOUNTS }}" \
           --build-arg VITE_BABY_ID="${{ secrets.VITE_BABY_ID }}" \
-          --build-arg VITE_PHONE_SUFFIX="${{ secrets.VITE_PHONE_SUFFIX }}" \
           -t ${{ needs.variables.outputs.image_name }}:latest .
 
       - name: Docker Push UI

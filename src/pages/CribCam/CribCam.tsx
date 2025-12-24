@@ -3,31 +3,39 @@ import { useNavigate } from 'react-router-dom';
 import PinCodeInput from '../../components/PinCodeInput/PinCodeInput';
 import './CribCam.css';
 import VideoPlayer from '../../components/VideoPlayer/VideoPlayer';
+import { NanitAccount } from '../../models/nanitAccount';
 
 const CribCam: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [nanitAccount, setNanitAccount] = useState<NanitAccount | undefined>(undefined);
   const [showPinCode, setShowPinCode] = useState(false);
   const [showMfaCode, setShowMfaCode] = useState(false);
   const [mfaToken, setMfaToken] = useState('');
   const [babyToken, setBabyToken] = useState('');
   const [error, setError] = useState('');
 
-
-  const accessCode = import.meta.env.VITE_ACCESS_CODE;
-  const allowedIP = import.meta.env.VITE_ALLOWED_IP;
-  const nanitEmail = import.meta.env.VITE_NANIT_EMAIL;
-  const nanitPassword = import.meta.env.VITE_NANIT_PASSWORD;
-  const phoneSuffix = import.meta.env.VITE_PHONE_SUFFIX;
+const nanitAccounts: NanitAccount[] = JSON.parse(import.meta.env.VITE_NANIT_ACCOUNTS || '[]');
   const babyId = import.meta.env.VITE_BABY_ID;
 
   const handlePinComplete = (enteredCode: string) => {
-    if (enteredCode === accessCode) {
-      login();
+    const account = nanitAccounts.find(a => a.pinCode == enteredCode);
+
+    setNanitAccount(account);
+
+    if (account) {
+      setShowPinCode(false);
+      setLoading(true);
+      login(account);
+      setLoading(false);
     } else {
       setError('Invalid access code. Please try again.');
     }
   };
+
+  const resetPage = async () =>{
+    setShowPinCode(true);
+  }
 
   const captureAccessToken = async(text : string) =>{
       const lines = text.trim().split('\n');
@@ -42,7 +50,7 @@ const CribCam: React.FC = () => {
       
   const getApiUrl = (resource : string) =>
     `/api/nanit/${resource}`;
-    // `http://localhost:3001/nanit/${resource}`;
+    //`http://localhost:3001/nanit/${resource}`;
 
   const handleMfaComplete = async (mfaCode: string) => {
     try {
@@ -53,10 +61,10 @@ const CribCam: React.FC = () => {
         },
         body: JSON.stringify({
           mfaCode: mfaCode,
-          email: nanitEmail,
-          password: nanitPassword,
+          email: nanitAccount?.email,
+          password: nanitAccount?.password,
           mfaToken: mfaToken,
-          phoneSuffix: phoneSuffix
+          phoneSuffix: nanitAccount?.phoneSuffix
         }),
       });
 
@@ -83,7 +91,7 @@ const CribCam: React.FC = () => {
   }
 
 
-  const login = async () => {
+  const login = async (account: NanitAccount) => {
     try {
       const loginResponse = await fetch(getApiUrl('login'), {
         method: 'POST',
@@ -91,8 +99,8 @@ const CribCam: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: nanitEmail,
-          password: nanitPassword,
+          email: account.email,
+          password: account.password,
         }),
       });
 
@@ -148,29 +156,9 @@ const CribCam: React.FC = () => {
   };
 
   useEffect(() => {
-    const checkIPAndRedirect = async (): Promise<void> => {
-      try {
-        setLoading(true);
-        setError('');
-
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        const userIP = data.ip;
-        
-        if (userIP === allowedIP) {
-          login();
-        } else {
-          setShowPinCode(true);
-        }
-      } catch (error) {
-        console.error('Error checking IP:', error);
-        setShowPinCode(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkIPAndRedirect();
+    setLoading(true);
+    setShowPinCode(nanitAccount == undefined);
+    setLoading(false);
   }, [navigate]);
 
 
@@ -207,7 +195,7 @@ const CribCam: React.FC = () => {
       <div className="login-container">
         <h2>Leonardo's Crib Cam</h2>
         <p>Click the button below to connect to the camera</p>
-        <button onClick={login} className="connect-button">
+        <button onClick={resetPage} className="connect-button">
           Connect to Camera
         </button>
         {error && <p className="error-message">{error}</p>}
