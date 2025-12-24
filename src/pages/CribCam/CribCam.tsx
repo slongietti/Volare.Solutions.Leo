@@ -53,6 +53,7 @@ const nanitAccounts: NanitAccount[] = JSON.parse(import.meta.env.VITE_NANIT_ACCO
     //`http://localhost:3001/nanit/${resource}`;
 
   const handleMfaComplete = async (mfaCode: string) => {
+    setLoading(true);
     try {
       const mfaResponse =await fetch(getApiUrl('verify-mfa'), {
         method: 'POST',
@@ -81,6 +82,8 @@ const nanitAccounts: NanitAccount[] = JSON.parse(import.meta.env.VITE_NANIT_ACCO
       console.error('MFA verification error:', error);
       setError('Invalid MFA code. Please try again.');
     }
+
+    setLoading(false);
   };
 
 
@@ -92,6 +95,7 @@ const nanitAccounts: NanitAccount[] = JSON.parse(import.meta.env.VITE_NANIT_ACCO
 
 
   const login = async (account: NanitAccount) => {
+    setLoading(true);
     try {
       const loginResponse = await fetch(getApiUrl('login'), {
         method: 'POST',
@@ -129,6 +133,7 @@ const nanitAccounts: NanitAccount[] = JSON.parse(import.meta.env.VITE_NANIT_ACCO
       console.error('Login error:', error);
       setError('Login failed. Please try again.');
     }
+    setLoading(false);
   };
 
   const startVideo = async (token : string) => {
@@ -192,14 +197,7 @@ const nanitAccounts: NanitAccount[] = JSON.parse(import.meta.env.VITE_NANIT_ACCO
         {error && <p className="error-message">{error}</p>}
       </div>
     ) : (
-      <div className="login-container">
-        <h2>Leonardo's Crib Cam</h2>
-        <p>Click the button below to connect to the camera</p>
-        <button onClick={resetPage} className="connect-button">
-          Connect to Camera
-        </button>
-        {error && <p className="error-message">{error}</p>}
-      </div>
+      <div/>
     )}
   </div>
 );
