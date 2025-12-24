@@ -7,7 +7,44 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const NANIT_BASE_URL = 'https://my.nanit.com';
 
-const createHeaders = (nextActionId) => {
+const ACTION_CHUNK_IDS = {
+  signInAction: '8488-0a4462fdb3ab02a2',
+  approveMfaCodeAction: 'app/%5Blocale%5D/(auth)/(with-no-session)/login/mfa-required/page-126ca83ef8280813',
+};
+
+getActionId = async (name) => {
+    const chunkId = ACTION_CHUNK_IDS[name];
+    try {
+        const response = await axios.get(`https://my.nanit.com/_next/static/chunks/${chunkId}.js`);
+        const jsContent = response.data;
+        
+        // Updated regex to match minified format
+        const regex = new RegExp(`createServerReference\\)\\("([a-f0-9]{42})",[^)]+"(${name})"\\)`);
+        let match;
+        let foundHash = null;
+        // Find all matches and look for the one with our action name
+        while ((match = regex.exec(jsContent)) !== null) {
+            if (match[2] === name) {
+                foundHash = match[1];
+                break;
+            }
+        }
+        if (!foundHash) {
+            console.log(`Action '${name}' not found in chunk`);
+            return null;
+        }
+        console.log(`Found hash for ${name}: ${foundHash}`);
+        return foundHash;
+      } catch (error) {
+        console.error(`Error capturing '${name}':`, error.message);
+        return null;
+    }
+  }
+
+const createHeaders = async (actionName) => {
+
+    const nextActionId = await getActionId(actionName);
+
     return {
       'Accept': 'text/x-component',
       'Content-Type': 'text/plain;charset=UTF-8',
@@ -93,7 +130,7 @@ app.post('/nanit/login', async (req, res) => {
         redirectOnSuccess: true
       }],
       {
-        headers: createHeaders('7fc3b08b343cd26420b7d30cdf22b34f932ce5a81c'),
+        headers: await createHeaders('signInAction'),
       }
     );
     
@@ -124,7 +161,7 @@ app.post('/nanit/verify-mfa', async (req, res) => {
         mfaToken: req.body.mfaToken
       }],
       {
-        headers: createHeaders('7f505092cdf6371d5ef91c8a8d17fdcd931486b8e9'),
+        headers: await createHeaders('approveMfaCodeAction'),
         maxRedirects: 0
       }
     );
@@ -169,6 +206,7 @@ app.post('/nanit/baby-token', async (req, res) => {
     });
   }
 });
+
 
 // Start the server
 app.listen(PORT, () => {
